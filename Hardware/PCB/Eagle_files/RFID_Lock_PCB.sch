@@ -10089,12 +10089,12 @@ general purpose rectifier, 1 A</description>
 <approved hash="113,1,83.7777,96.8096,D24V5F3,,,,,"/>
 <approved hash="113,1,117.517,116.772,MOTOR,,,,,"/>
 <approved hash="113,1,117.517,96.4523,MOT_PWR,,,,,"/>
-<approved hash="113,1,-19.6427,130.742,J4,,,,,"/>
 <approved hash="113,1,-19.6427,112.962,J5,,,,,"/>
 <approved hash="113,1,107.357,60.8923,DOOR,,,,,"/>
 <approved hash="113,1,107.357,45.6523,LED,,,,,"/>
 <approved hash="113,1,-59.0973,59.7577,SENSOR2,,,,,"/>
 <approved hash="113,1,-59.0973,41.9777,SENSOR1,,,,,"/>
+<approved hash="113,1,-9.48267,139.632,SOLENOID,,,,,"/>
 </errors>
 </schematic>
 </drawing>
