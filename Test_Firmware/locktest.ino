@@ -19,13 +19,13 @@
     The cloud function "moveServo" will close the servo_lock when called with an argument of "0";
     it will open the servo_lock when called with any other argument.
 
-    by: Bob Glicksma; 3/14/20
+    by: Bob Glicksma; 3/17/20
     (c) 2020 by Bob Glicksman, Jim Schrempp, Team Practical Projects
 
 */
 
-const int pulseTime = 20;   // motor activation time (ms)
-const int unlockTime = 3000;    // unlock time for door to swing open
+const int pulseTime = 30;   // motor activation time (ms)
+const int unlockTime = 500;    // unlock time for door to swing open
 
 const int CLOSED_POSITION = 85; // servo opne position
 const int OPEN_POSITION = 5;    // servo close (lock) position
@@ -87,6 +87,7 @@ void loop() {
 }   // end of loop()
 
 int tripLock(String command) {  // cloud function to trip the lock
+    lock(); // dono why, but this needs to be here to work!
     unlock();
     delay(unlockTime);
     lock();
