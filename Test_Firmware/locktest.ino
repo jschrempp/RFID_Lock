@@ -25,6 +25,7 @@
 */
 
 const int pulseTime = 30;   // motor activation time (ms)
+const int recoveryTime = 20;    // minimum time between lock() and unlock()
 const int unlockTime = 500;    // unlock time for door to swing open
 
 const int CLOSED_POSITION = 85; // servo opne position
@@ -88,6 +89,7 @@ void loop() {
 
 int tripLock(String command) {  // cloud function to trip the lock
     lock(); // dono why, but this needs to be here to work!
+    delay(recoveryTime);
     unlock();
     delay(unlockTime);
     lock();
@@ -131,3 +133,4 @@ void lock() { // lock the latch
     delay(pulseTime);
     digitalWrite(runPin, LOW);
 }   // end of lock()
+
