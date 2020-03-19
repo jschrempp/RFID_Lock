@@ -25,7 +25,7 @@
 */
 
 const int pulseTime = 30;   // motor activation time (ms)
-const int recoveryTime = 20;    // minimum time between lock() and unlock()
+const int recoveryTime = 20;    // minimum time between lock() and unlock() - may not be needed
 const int unlockTime = 500;    // unlock time for door to swing open
 
 const int CLOSED_POSITION = 85; // servo opne position
@@ -88,8 +88,8 @@ void loop() {
 }   // end of loop()
 
 int tripLock(String command) {  // cloud function to trip the lock
-    lock(); // dono why, but this needs to be here to work!
-    delay(recoveryTime);
+    lock(); // try removing this loc with a new unit
+    delay(recoveryTime); // try removing this loc with a new unit
     unlock();
     delay(unlockTime);
     lock();
