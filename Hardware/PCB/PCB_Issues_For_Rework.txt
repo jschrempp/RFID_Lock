@@ -1,0 +1,7 @@
+PCB Issues for rework in Rev 1:
+
+1.  The D24V5F3 voltage regulator appears to need some inductance on the VOUT motor supply.  At least, it works OK with jumpers.
+2.  The buzzer part needs to be changed to have the correct pin spacing.
+3.  The transistor silkscreen is backward; perhaps the package is wrong.
+4.  R7 and R8 pulldowns are unnecessary and should be replaced.
+
