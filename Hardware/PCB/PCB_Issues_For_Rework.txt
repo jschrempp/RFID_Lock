@@ -1,9 +1,0 @@
-PCB Issues for rework in Rev 1:
-
-1.  Change D24V5F3 voltage regulator to LD1117-3.3 linear voltage regulator
-2.  The buzzer part needs to be changed to have the correct pin spacing.
-3.  The transistor silkscreen is backward; perhaps the package is wrong.
-4.  R7 and R8 pulldowns are unnecessary and should be removed (DRV8838 has weak pulldowns on these pins).
-5.  Add a 4.7 Kohm resistor between the motor power and GND (bleeder).
-
-
