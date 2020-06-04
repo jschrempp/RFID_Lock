@@ -46,8 +46,8 @@ We chose the Tokatuker solution because the locking mechanism itself is very inn
 a small, low power DC motor to control a mechanically robust locking system.  We found that pulsing this
 motor for 30 milliseconds in one direction unlocks the lock and pulsing it for 30 milliseconds in the 
 opposite direction re-locks the lock.  Unlocking the lock springs the cabinet door open and the door can
-thereafter be closed and will lock anytime after the small motor returns to the locked position.  
-The device can therefore unlock, opening the cabinet door, and then immediately re-lock and the door can 
+thereafter be closed and will lock anytime after the small motor returns to the locked position. The 
+device can therefore unlock, opening the cabinet door, and then immediately re-lock and the door can 
 be closed and will automatically lock at any time thereafter.
 
 This project contains complete instructions for building an RFID Lock using the Tokatuker product.
