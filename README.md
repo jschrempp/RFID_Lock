@@ -9,7 +9,7 @@ RFID-based access control to a Makerspace and it's various internal equipment lo
 Particle Argon-based RFID stations with a commercial cloud CRM system and an internal tracking database.
 The MN_ACL project ensures that people who access the facility are paid up members in good standing and that
 members who access certain locations containing sophisticated industrial equipment have basic operating 
-and safety instruction credentials.  The project controls access via red/green lit buttons and audible beeper.
+and safety instruction credentials.  The project controls access via red/green lit buttons and an audible beeper.
 
 Certain locations within the Makerspace contain expensive materials, parts and accessories.  We decided to create 
 a Particle Photon-based add-on that could subscribe to publications sent by the Argons in the RFID stations
