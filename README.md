@@ -1,7 +1,10 @@
 # RFID_Lock
+
 Hardware and firmware for a Photon-based device that can control various locking mechanisms.
-The device can subscribe to publications from an RFID station in order to unlock a cabinet or
-activate some powered equipment.  
+
+The device subscribes to publications with the name "checkin". These events are published by an RFID Station. The event data is JSON and includes the deviceType of the publisher.
+
+Each lock station is configured via Particle Cloud to act on a checkin event from a particular deviceType. If the event contains the correct deviceType, then this device will unlock a cabinet.
 
 ## Story
 Our MN_ACL project (https://github.com/TeamPracticalProjects/MN_ACL) creates an infrastructure for secure, 
