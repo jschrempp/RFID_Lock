@@ -104,10 +104,10 @@ void firmwareupdatehandler(system_event_t event, int data) {
         digitalWrite(led2,LOW);
         break;
     case firmware_update_complete:
-        //writeToLCD("Firmeware update","complete");  // xxx this didn't get called
+        
         break;
     case firmware_update_failed:
-        //writeToLCD("Firmware update","failed");  // xxx this is called even on successful update??
+        
         break;
     }
 }
@@ -184,7 +184,6 @@ int cloudSetDeviceType(String data) {
         logToDB("DeviceTypeChange", String(deviceType),0,"","");
         EEPROMdata.deviceType = deviceType;
         EEPROMWrite(); // push the new devtype into EEPROM 
-        writeToLCD("Changed Type","rebooting");
         digitalWrite(REJECT_LED, HIGH);
         // reset variable so mainloop does not change LCD display 
         // (I admit this is a bit of a hack, but we are going to reboot right away anyway and
@@ -397,7 +396,6 @@ void fdbReceiveStationConfig(const char *event, const char *data) {
                     + String((int) EEPROMdata.deviceType) 
                     + " received: " 
                     + String(root_0["deviceType"].as<int>()) );
-            writeToLCD("Station Config", "data is bad");
             // the admin loop will be waiting for the isValid member to be true.
         }
    
@@ -635,7 +633,7 @@ void loop() {
         if (millis() - processStart > 20000 ) {
 
             // Failed to get station config
-            writeToLCD("Get Station","Config failed");
+            // xxx how to alert to this error??
             mainloopState = mlsERROR;
 
         } else if (g_stationConfig.isValid) {
@@ -664,7 +662,7 @@ void loop() {
         break;
 
     default:
-        writeToLCD("Unknown","mainLoopState");
+        // how to alert to this error
         mainloopState = mlsERROR;
         break;
     }
