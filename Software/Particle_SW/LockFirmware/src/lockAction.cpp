@@ -22,10 +22,6 @@
 const int pulseTime = 30;   // motor activation time (ms)
 const int unlockTime = 2000;    // unlock time for door to swing open
 
-const int CLOSED_POSITION = 85; // servo opne position
-const int OPEN_POSITION = 5;    // servo close (lock) position
-
-
 const int directionPin = D2;
 const int runPin = D3;
 
