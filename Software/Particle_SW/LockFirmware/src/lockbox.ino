@@ -40,8 +40,10 @@
  * Authors: Bob Glicksman, Jim Schrempp
  * 
  *    0.1  Just starting on it
+ *    0.2  It works
+ *    0.3  Added cloud function to trip lock
 ************************************************************************/
-#define MN_FIRMWARE_VERSION 0.1
+#define MN_FIRMWARE_VERSION 0.3
 
 // Our UTILITIES
 #include "mnutils.h"
@@ -228,6 +230,15 @@ int cloudSetLockListenDevType(String data) {
 
     return 1;
 
+}
+
+// ------------- Cloud Trip Lock  ---------
+// Called to open the lock as if a checkin event was received
+// The parameter is ignored.
+//
+int cloudTripLock(String data) {
+    tripLock();
+    return 0;
 }
 
 
@@ -514,7 +525,10 @@ void setup() {
     
     // Used by all device types
     success = Particle.function("SetDeviceType", cloudSetDeviceType);
+
+    // used by lockbox
     success = Particle.function("SetLockListenType",cloudSetLockListenDevType);
+    success = Particle.function("TripLock",cloudTripLock);
    
      // Needed for all devices
     Particle.subscribe(System.deviceID() + "mnlogdb",particleCallbackMNLOGDB, MY_DEVICES); // older
