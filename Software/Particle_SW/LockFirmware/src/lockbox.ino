@@ -47,10 +47,13 @@
 #include "mnutils.h"
 #include "lockAction.h"
 
-int led2 = D7; // This one is the built-in tiny one to the right of the USB jack
-
 //----------- Global Variables
 
+// holds event data for a received checkin event
+// The loopLockbox() routine waits for this to be non null and then 
+// handles the event. After handling event it sets this to the null
+// string and its ready to go again.
+String mg_checkinEventData = "";
 
 String g_recentErrors = "";
 String debug2 = "";
@@ -101,13 +104,13 @@ char * strcat_safe( const char *str1, const char *str2 )
 void firmwareupdatehandler(system_event_t event, int data) {
     switch (data) {
     case firmware_update_begin:
-        digitalWrite(led2,LOW);
+
         break;
     case firmware_update_complete:
-        //writeToLCD("Firmeware update","complete");  // xxx this didn't get called
+        
         break;
     case firmware_update_failed:
-        //writeToLCD("Firmware update","failed");  // xxx this is called even on successful update??
+        
         break;
     }
 }
@@ -134,7 +137,7 @@ void heartbeatLEDs() {
             ledState = HIGH;
         }
         
-        digitalWrite(led2, ledState);
+        digitalWrite(ONBOARD_LED_PIN, ledState);
         lastBlinkTimeD7 = millis();
     
     }
@@ -184,7 +187,6 @@ int cloudSetDeviceType(String data) {
         logToDB("DeviceTypeChange", String(deviceType),0,"","");
         EEPROMdata.deviceType = deviceType;
         EEPROMWrite(); // push the new devtype into EEPROM 
-        writeToLCD("Changed Type","rebooting");
         digitalWrite(REJECT_LED, HIGH);
         // reset variable so mainloop does not change LCD display 
         // (I admit this is a bit of a hack, but we are going to reboot right away anyway and
@@ -228,6 +230,8 @@ int cloudSetLockListenDevType(String data) {
 
 }
 
+
+
 //--------------- particleEventcheckin --------------------
 // 
 // This routine  is registered with the particle cloud to receive any
@@ -245,11 +249,16 @@ void particleCallbackEventCheckin (const char *event, const char *data) {
 
     if (eventName.indexOf("checkin") >= 0) {
 
-        eventcheckin(event, data);
+        if (mg_checkinEventData.length() > 0) {
+            //we have not processed the previous checkin event
+            debugEvent("checkin buffer overrun");
+        } else {
+            mg_checkinEventData = String(data);
+        }
 
     } else {
-
-        debugEvent("unknown particle event 1: " + String(event));
+        // only here for debugging. In fact, there could be events that are not "checkin" and we should not care
+        // debugEvent("unknown particle event 1: " + String(event));
 
     }
 
@@ -258,12 +267,12 @@ void particleCallbackEventCheckin (const char *event, const char *data) {
         
 }
 
-void eventcheckin(String event, String data) {
+void eventcheckin(String data) {
 
     const int capacity = JSON_OBJECT_SIZE(8) + 2*JSON_OBJECT_SIZE(8);
     StaticJsonDocument<capacity> docJSON;
    
-    char temp[3000]; //This has to be long enough for an entire JSON response
+    char temp[1000]; //This has to be long enough for an entire JSON response
     strcpy_safe(temp, data);
 
     // will it parse?
@@ -397,7 +406,6 @@ void fdbReceiveStationConfig(const char *event, const char *data) {
                     + String((int) EEPROMdata.deviceType) 
                     + " received: " 
                     + String(root_0["deviceType"].as<int>()) );
-            writeToLCD("Station Config", "data is bad");
             // the admin loop will be waiting for the isValid member to be true.
         }
    
@@ -432,29 +440,27 @@ void loopLockbox() {
     //WoodshopLoopStates
     enum llbxState {
         llbxINIT,
-        llbxWAIT,
+        llbxWAITFOREVENTDATA,
         llbxERROR
     };
     
     static llbxState llbxloopState = llbxINIT;
-    static unsigned long processStartMilliseconds = 0; 
+    //static unsigned long processStartMilliseconds = 0; 
     
     switch (llbxloopState) {
     case llbxINIT:
-        llbxloopState = llbxWAIT;
+        llbxloopState = llbxWAITFOREVENTDATA;
         break;
     
-    case llbxWAIT:{
+    case llbxWAITFOREVENTDATA:{
 
-        if (millis() - processStartMilliseconds > 5000) {
-            
-            llbxloopState = llbxWAIT;
+        if (mg_checkinEventData.length() > 0) {
 
-        } else {
+            eventcheckin(mg_checkinEventData);
+            mg_checkinEventData = ""; // we handled the event, so clear it
 
-            llbxloopState = llbxWAIT;
+        }
 
-        } 
         // just stay in this state
         break;
     }
@@ -491,8 +497,6 @@ void loopUndefinedDevice() {
 // This routine runs only once upon reset
 void setup() {
 
-    Particle.variable ("ClientID", g_clientInfo.clientID);
-    Particle.variable ("ContractStatus",g_clientInfo.contractStatus);
     Particle.variable ("recentErrors",g_recentErrors);
     Particle.variable ("JSONParseError", JSONParseError);
       
@@ -515,7 +519,7 @@ void setup() {
      // Needed for all devices
     Particle.subscribe(System.deviceID() + "mnlogdb",particleCallbackMNLOGDB, MY_DEVICES); // older
     Particle.subscribe(System.deviceID() + "fdb",particleCallbackMNLOGDB, MY_DEVICES); // newer
-    Particle.subscribe("checkin",particleCallbackEventCheckin, MY_DEVICES); // newer
+    Particle.subscribe("checkin",particleCallbackEventCheckin, MY_DEVICES); 
 
     System.on(firmware_update, firmwareupdatehandler);
 
@@ -549,34 +553,13 @@ void setup() {
 
     // read EEPROM data for device type 
     EEPROMRead();
-
-    // Initialize D0 + D7 pin as output
-    // It's important you do this here, inside the setup() function rather than outside it 
-    // or in the loop function.
-    pinMode(led2, OUTPUT);
-    
-    pinMode(READY_LED, OUTPUT);
-    pinMode(ADMIT_LED, OUTPUT);
-    pinMode(REJECT_LED, OUTPUT);
-    pinMode(BUZZER_PIN, OUTPUT);
+  
     pinMode(ONBOARD_LED_PIN, OUTPUT);   // the D7 LED
-    
-    digitalWrite(READY_LED, LOW);
-    digitalWrite(ADMIT_LED, LOW);
-    digitalWrite(REJECT_LED, LOW);
-    digitalWrite(BUZZER_PIN, LOW);
     digitalWrite(ONBOARD_LED_PIN,LOW);
- 
-
-#ifdef TEST
-    delay(5000);    // delay to get putty up
-    Serial.println("trying to connect ....");
-#endif
    
     logToDB("restart",String(MN_FIRMWARE_VERSION),0,"","" );
    
     // Signal ready to go
-    buzzerGoodBeepTwice();
     //flash the D7 LED twice
     for (int i = 0; i < 2; i++) {
         digitalWrite(ONBOARD_LED_PIN, HIGH);
@@ -635,7 +618,7 @@ void loop() {
         if (millis() - processStart > 20000 ) {
 
             // Failed to get station config
-            writeToLCD("Get Station","Config failed");
+            // xxx how to alert to this error??
             mainloopState = mlsERROR;
 
         } else if (g_stationConfig.isValid) {
@@ -664,7 +647,7 @@ void loop() {
         break;
 
     default:
-        writeToLCD("Unknown","mainLoopState");
+        // how to alert to this error
         mainloopState = mlsERROR;
         break;
     }
@@ -672,7 +655,6 @@ void loop() {
     heartbeatLEDs(); // heartbead on D7 LED 
 
     debugEvent("");  // need this to pump the debug event process
-
 
     // Reboot once a day.
     if ( (Time.hour() == 1) && (Time.minute() == 5)) {   
