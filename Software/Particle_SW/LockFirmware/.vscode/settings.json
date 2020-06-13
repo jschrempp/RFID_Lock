@@ -1,4 +1,5 @@
 {
     "particle.firmwareVersion": "1.5.2",
-    "particle.targetPlatform": "photon"
+    "particle.targetPlatform": "photon",
+    "particle.targetDevice": "RFID_Lock"
 }
