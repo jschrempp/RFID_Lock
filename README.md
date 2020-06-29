@@ -4,7 +4,7 @@ Hardware and firmware for a Photon-based device that can control various locking
 
 The device subscribes to publications with the name "checkin". These events are published by an RFID Station. The event data is JSON and includes the deviceType of the publisher.
 
-Each lock station is configured via Particle Cloud to act on a checkin event from a particular deviceType. If the event contains the correct deviceType, then this device will unlock a cabinet.
+Each lock station is configured via an App (or via the Particle Cloud) to act on a checkin event from a particular deviceType. If the event contains the correct deviceType, then this device will unlock a cabinet.
 
 ## Story
 Our MN_ACL project (https://github.com/TeamPracticalProjects/MN_ACL) creates an infrastructure for secure, 
@@ -61,7 +61,7 @@ solutions through to a complete project solution.
 
 ## Electronics
 We developed a printed circuit board that houses a Photon and integrates the Photon with components
-that allowed us to test out various locking solutions.  This printed circuity board seemed so generally
+that allowed us to test out various locking solutions.  This printed circuit board seemed so generally
 useful to us that we have made it a project unto itself.  See: 
 https://github.com/TeamPracticalProjects/Wireless_IO_Board
 
