@@ -9,7 +9,7 @@
  * device number it will respond to.
  * 
  * Checkin event Base format
- *      {“deviceType”:105}
+ *      {“deviceType”:105, "secret":12345}
  * Extended format
  *      { “deviceType”:105, 
  *        “Modifiers”: 
@@ -21,6 +21,10 @@
  *       }
  *      The “Modifiers” section is to be determined as specific protocol between an RFID 
  *      station type and the lockboxes that are intended to respond. Mod1, etc are just placeholders.
+ * 
+ * The device will check that the "secret" is equal to checkinEventSecret. This assures the lock 
+ * device that the checkin event was published by an authentic RFID station.
+ * 
  * 
  * The configuration function is:
  *      setLockListenDevType(param1)
@@ -40,13 +44,15 @@
  * Authors: Bob Glicksman, Jim Schrempp
  * 
  *    0.1 copied over lockBox.ino, renamed the ...Action source files and changed 
- *        solenoidAction to be appropriate for the door lock solenoid we have.  
+ *        solenoidAction to be appropriate for the door lock solenoid we have.
+ *    0.2 now tests checkin event for secret value that proves it came from a real RFID box  
 ************************************************************************/
-#define MN_FIRMWARE_VERSION 0.1
+#define MN_FIRMWARE_VERSION 0.2
 
 // Our UTILITIES
 #include "mnutils.h"
 #include "solenoidAction.h"
+#include "rfidkeys.h"
 
 //----------- Global Variables
 
@@ -290,17 +296,24 @@ void eventcheckin(String data) {
     JSONParseError =  err.c_str();
     if (!err) {
         //We have valid full JSON response 
-        if (docJSON["deviceType"] == EEPROMdata.lockListenType) {
-
-            tripSolenoid();
-            logToDB("Unlock", "Unlocking based on checkin of devType: " 
-                    +  String((int) EEPROMdata.deviceType), 0, "", "");
-            debugEvent("Unlocking based on checkin of devType: " 
-                    +  String((int) EEPROMdata.deviceType) );
-
+        int secret = docJSON["secret"];
+        if (secret != checkinEventSecret ) {
+            // secret did not validate, the event publisher is a fraud 
+            debugEvent("received checkin with bad secret:" + String(secret));
         } else {
-            // Not the device type we are looking for
-            debugEvent("received checkin event, not my devType");
+            // secret value was correct
+            if (docJSON["deviceType"] == EEPROMdata.lockListenType) {
+
+                tripSolenoid();
+                logToDB("Unlock", "Unlocking based on checkin of devType: " 
+                        +  String((int) EEPROMdata.deviceType), 0, "", "");
+                debugEvent("Unlocking based on checkin of devType: " 
+                        +  String((int) EEPROMdata.deviceType) );
+
+            } else {
+                // Not the device type we are looking for
+                debugEvent("received checkin event, not my devType");
+            }
         }
    
     } else {
