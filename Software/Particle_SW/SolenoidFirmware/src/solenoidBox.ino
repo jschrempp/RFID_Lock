@@ -45,9 +45,10 @@
  * 
  *    0.1 copied over lockBox.ino, renamed the ...Action source files and changed 
  *        solenoidAction to be appropriate for the door lock solenoid we have.
- *    0.2 now tests checkin event for secret value that proves it came from a real RFID box  
+ *    0.2 now tests checkin event for secret value that proves it came from a real RFID box
+ *    0.3 uses new production compile directive in mnutils.h  
 ************************************************************************/
-#define MN_FIRMWARE_VERSION 0.2
+#define MN_FIRMWARE_VERSION 0.3
 
 // Our UTILITIES
 #include "mnutils.h"
