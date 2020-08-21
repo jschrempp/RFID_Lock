@@ -1,6 +1,0 @@
-{
-    "particle.firmwareVersion": "1.5.2",
-    "particle.targetPlatform": "photon",
-    "particle.targetDevice": "RFID_Lock",
-    "cortex-debug.openocdPath": "${command:particle.getDebuggerOpenocdPath}"
-}
