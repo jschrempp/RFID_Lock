@@ -2,6 +2,7 @@
 *.bin
 *.der
 solenoidBox.cpp
+lockbox.cpp
 rfidkeysPRODUCTION.cpp
 */.vscode/settings.json
 Software/Particle_SW/SolenoidFirmware/target/*

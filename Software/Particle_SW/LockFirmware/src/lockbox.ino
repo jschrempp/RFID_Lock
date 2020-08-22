@@ -42,12 +42,14 @@
  *    0.1  Just starting on it
  *    0.2  It works
  *    0.3  Added cloud function to trip lock
+ *    0.3  Added validate checkin event using secret value. 
 ************************************************************************/
 #define MN_FIRMWARE_VERSION 0.3
 
 // Our UTILITIES
 #include "mnutils.h"
 #include "lockAction.h"
+#include "rfidkeys.h"
 
 //----------- Global Variables
 
@@ -289,19 +291,26 @@ void eventcheckin(String data) {
     // will it parse?
     DeserializationError err = deserializeJson(docJSON, temp );
     JSONParseError =  err.c_str();
-    if (!err) {
+   if (!err) {
         //We have valid full JSON response 
-        if (docJSON["deviceType"] == EEPROMdata.lockListenType) {
-
-            tripLock();
-            logToDB("Unlock", "Unlocking based on checkin of devType: " 
-                    +  String((int) EEPROMdata.deviceType), 0, "", "");
-            debugEvent("Unlocking based on checkin of devType: " 
-                    +  String((int) EEPROMdata.deviceType) );
-
+        int secret = docJSON["secret"];
+        if (secret != checkinEventSecret ) {
+            // secret did not validate, the event publisher is a fraud 
+            debugEvent("received checkin with bad secret:" + String(secret));
         } else {
-            // Not the device type we are looking for
-            debugEvent("received checkin event, not my devType");
+            // secret value was correct
+            if (docJSON["deviceType"] == EEPROMdata.lockListenType) {
+
+                tripLock();
+                logToDB("Unlock", "Unlocking based on checkin of devType: " 
+                        +  String((int) EEPROMdata.deviceType), 0, "", "");
+                debugEvent("Unlocking based on checkin of devType: " 
+                        +  String((int) EEPROMdata.deviceType) );
+
+            } else {
+                // Not the device type we are looking for
+                debugEvent("received checkin event, not my devType");
+            }
         }
    
     } else {
