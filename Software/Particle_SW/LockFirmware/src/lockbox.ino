@@ -42,6 +42,7 @@
  *    0.1  Just starting on it
  *    0.2  It works
  *    0.3  Added cloud function to trip lock
+ *    0.3  Added validate checkin event using secret value. 
 ************************************************************************/
 #define MN_FIRMWARE_VERSION 0.3
 
