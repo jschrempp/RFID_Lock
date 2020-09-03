@@ -46,6 +46,7 @@ We selected the Particle Photon for this project because it provides a low cost 
 control and communication and because of Particle's simple and elegant cloud communication capabilities.
 
 ## Locking Mechanisms
+### Locking a cabinet
 We investigated a number of solutions for electrically controlled locking mechanisms and we ultimately
 decided to hack an off-the-shelf mechanism from Tokatuker; see: 
 https://www.amazon.com/Tokatuker-Electronic-Cabinet-Hidden-Drawer/dp/B075QF1VPR
@@ -64,11 +65,13 @@ thereafter be closed and will lock anytime after the small motor returns to the 
 device can therefore unlock, opening the cabinet door, and then immediately re-lock and the door can 
 be closed and will automatically lock at any time thereafter.
 
+### The front door
 The facility front door has a locking pushbar that includes a solenoid for remote unlocking.  This solenoid
 was already wired back to the facility's equipment room. We experimentally determined that activating the 
 solenoid for 2 seconds after a successful RFID card tap-in by a member in good standing is more than sufficient 
 to provide entry to the facility.
 
+### Our documentation
 This project contains complete instructions for building an RFID Lock using the Tokatuker product.  This
 project also contains instructions and firmware for activating a door-unlocking solenoid.
 We also investigated various other locking mechanisms based upon servos, solenoids, etc.
