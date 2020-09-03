@@ -1,7 +1,7 @@
 /*********************************************************************
- * lockbox
+ * solenoidBox
  * 
- * This program is used to control the locking mechanism of a box.
+ * This program is used to control a solenoid that actuates a lock.
  * The program listens for a Particle IO event named "checkin". It then
  * examines the data of the event to see if this event should be acted upon.
  * In this first implementation it expect the event data to be a JSON package.
@@ -9,7 +9,7 @@
  * device number it will respond to.
  * 
  * Checkin event Base format
- *      {“deviceType”:105}
+ *      {“deviceType”:105, "secret":12345}
  * Extended format
  *      { “deviceType”:105, 
  *        “Modifiers”: 
@@ -22,6 +22,10 @@
  *      The “Modifiers” section is to be determined as specific protocol between an RFID 
  *      station type and the lockboxes that are intended to respond. Mod1, etc are just placeholders.
  * 
+ * The device will check that the "secret" is equal to checkinEventSecret. This assures the lock 
+ * device that the checkin event was published by an authentic RFID station.
+ * 
+ * 
  * The configuration function is:
  *      setLockListenDevType(param1)
  *      where param1 is a string representation of the device type to listen for.
@@ -30,8 +34,8 @@
  *      cloudSetDeviceType(String data)
  *      
  * Hints on reading this code ...
- * The action starts when we receive a "checkin" event from the Particle Cloud. That is stowed
- * and the main loop will see it and act on it.
+ * The action starts when we receive a "checkin" event from the Particle Cloud. That is stored
+ * in a global and the main loop will see it and act on it.
  * 
  * PRE RELEASE DEVELOPMENT LOG
  * 
@@ -39,16 +43,16 @@
  * 
  * Authors: Bob Glicksman, Jim Schrempp
  * 
- *    0.1  Just starting on it
- *    0.2  It works
- *    0.3  Added cloud function to trip lock
- *    0.3  Added validate checkin event using secret value. 
+ *    0.1 copied over lockBox.ino, renamed the ...Action source files and changed 
+ *        solenoidAction to be appropriate for the door lock solenoid we have.
+ *    0.2 now tests checkin event for secret value that proves it came from a real RFID box
+ *    0.3 uses new production compile directive in mnutils.h  
 ************************************************************************/
 #define MN_FIRMWARE_VERSION 0.3
 
 // Our UTILITIES
 #include "mnutils.h"
-#include "lockAction.h"
+#include "solenoidAction.h"
 #include "rfidkeys.h"
 
 //----------- Global Variables
@@ -239,7 +243,7 @@ int cloudSetLockListenDevType(String data) {
 // The parameter is ignored.
 //
 int cloudTripLock(String data) {
-    tripLock();
+    tripSolenoid();
     return 0;
 }
 
@@ -291,7 +295,7 @@ void eventcheckin(String data) {
     // will it parse?
     DeserializationError err = deserializeJson(docJSON, temp );
     JSONParseError =  err.c_str();
-   if (!err) {
+    if (!err) {
         //We have valid full JSON response 
         int secret = docJSON["secret"];
         if (secret != checkinEventSecret ) {
@@ -301,7 +305,7 @@ void eventcheckin(String data) {
             // secret value was correct
             if (docJSON["deviceType"] == EEPROMdata.lockListenType) {
 
-                tripLock();
+                tripSolenoid();
                 logToDB("Unlock", "Unlocking based on checkin of devType: " 
                         +  String((int) EEPROMdata.deviceType), 0, "", "");
                 debugEvent("Unlocking based on checkin of devType: " 
@@ -549,7 +553,7 @@ void setup() {
     allowDebugToPublish = millis();  // Allows our particle publish routines to run now
 
     // initialize the lockAction library
-    initLockAction();
+    initSolenoidAction();
 
     // Gawd, dealing with dst!
     Time.zone(-8); //PST We are not dealing with DST in this device

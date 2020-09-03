@@ -1,0 +1,12 @@
+*.pem
+*.bin
+*.der
+solenoidBox.cpp
+lockbox.cpp
+rfidkeysPRODUCTION.cpp
+*/.vscode/settings.json
+Software/Particle_SW/SolenoidFirmware/target/*
+Software/Particle_SW/LockFirmware/target/*
+Software/Particle_SW/LockFirmware/.vscode/
+Software/Particle_SW/SolenoidFirmware/.vscode/
+
