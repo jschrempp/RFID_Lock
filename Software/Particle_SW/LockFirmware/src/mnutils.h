@@ -13,6 +13,9 @@
 //#define LCD_PRESENT  // uncomment when an LCD display is connected
 //#define MN_PRODUCTION_COMPILE // uncomment to compile with production keys
 
+//#define DEBUGX_EVENTS_ALLOWED  //These events consume Particle cloud Data Operations and should not be enabled for
+                               //every production device for weeks at a time. 
+
 #ifdef LCD_PRESENT
 // This #include statement was automatically added by the Particle IDE.
 #include <LiquidCrystal.h>   

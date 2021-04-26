@@ -43,8 +43,10 @@
  *    0.2  It works
  *    0.3  Added cloud function to trip lock
  *    0.3  Added validate checkin event using secret value. 
+ *    0.4  Added #define in mnutils.h to prevent degbugX events that cost Particle 
+ *         data operations
 ************************************************************************/
-#define MN_FIRMWARE_VERSION 0.3
+#define MN_FIRMWARE_VERSION 0.4
 
 // Our UTILITIES
 #include "mnutils.h"
