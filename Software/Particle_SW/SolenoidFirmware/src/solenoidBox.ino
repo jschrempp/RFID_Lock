@@ -50,6 +50,7 @@
  *    0.4 added define in mnutils.h to prevent debugX events from publishing 
 ************************************************************************/
 #define MN_FIRMWARE_VERSION 0.4
+STARTUP(WiFi.selectAntenna(ANT_AUTO)); // if an external antenna is available, use it
 
 // Our UTILITIES
 #include "mnutils.h"
