@@ -46,9 +46,11 @@
  *    0.1 copied over lockBox.ino, renamed the ...Action source files and changed 
  *        solenoidAction to be appropriate for the door lock solenoid we have.
  *    0.2 now tests checkin event for secret value that proves it came from a real RFID box
- *    0.3 uses new production compile directive in mnutils.h  
+ *    0.3 uses new production compile directive in mnutils.h 
+ *    0.4 added define in mnutils.h to prevent debugX events from publishing 
 ************************************************************************/
-#define MN_FIRMWARE_VERSION 0.3
+#define MN_FIRMWARE_VERSION 0.4
+STARTUP(WiFi.selectAntenna(ANT_AUTO)); // if an external antenna is available, use it
 
 // Our UTILITIES
 #include "mnutils.h"
