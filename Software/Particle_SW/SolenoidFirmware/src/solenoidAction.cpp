@@ -11,11 +11,15 @@
     by: Bob Glicksman, Jim Schrempp; 8/9/2020
     (c) 2020 by Bob Glicksman, Jim Schrempp, Team Practical Projects
 
+change history
+9/7/2021 increased unlockTime from 2000 to 4000
+
+
 */
 
 #include "solenoidAction.h"
 
-const int unlockTime = 2000;    // unlock time for door to swing open
+const int unlockTime = 4000;    // unlock time for door to swing open
 const int runPin = D0;
 
 void unlock() { // unlock the latch
